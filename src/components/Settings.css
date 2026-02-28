@@ -1,0 +1,155 @@
+.settings-view {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 900px;
+}
+
+.settings-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.settings-card {
+    padding: 30px;
+}
+
+.card-title {
+    font-size: 22px;
+    margin-bottom: 24px;
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+}
+
+.input-group input {
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-light);
+    font-size: 15px;
+    color: var(--color-text-primary);
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px var(--color-primary-light);
+    background-color: var(--color-bg-card);
+}
+
+.settings-row {
+    display: flex;
+    gap: 24px;
+}
+
+.input-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-row>div {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.divider-dash {
+    margin-top: 28px;
+    color: var(--color-text-tertiary);
+    font-weight: bold;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
+.description-text {
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 16px;
+}
+
+.btn-secondary {
+    background-color: var(--color-bg-card);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-bg-light);
+    border-color: var(--color-text-tertiary);
+}
+
+.file-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    gap: 8px;
+}
+
+.status-banner {
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    animation: slideDown 0.3s ease;
+}
+
+.status-banner.success {
+    background-color: var(--color-success-light);
+    color: #1a7b32;
+    /* darker green for text */
+}
+
+.status-banner.error {
+    background-color: var(--color-danger-light);
+    color: #a31e16;
+    /* darker red for text */
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
