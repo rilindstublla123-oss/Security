@@ -40,6 +40,7 @@ function App() {
         return <CalendarView
           globalSelectedDate={globalSelectedDate}
           setGlobalSelectedDate={setGlobalSelectedDate}
+          openModal={setModalType}
         />;
       case 'summary':
         return <Summary />;

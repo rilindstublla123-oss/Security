@@ -10,7 +10,7 @@ import { loadData, loadConfig, saveConfig, saveData } from '../utils/config';
 import { fetchBavarianHolidays } from '../utils/holidays';
 import './CalendarView.css';
 
-export default function CalendarView({ globalSelectedDate, setGlobalSelectedDate }) {
+export default function CalendarView({ globalSelectedDate, setGlobalSelectedDate, openModal }) {
     const [currentDate, setCurrentDate] = useState(globalSelectedDate || new Date());
     const [data, setData] = useState({});
     const [config, setConfig] = useState({});
@@ -223,6 +223,9 @@ export default function CalendarView({ globalSelectedDate, setGlobalSelectedDate
                 </div>
 
                 <div className="premium-card action-card">
+                    <button className="btn-primary full-width mb-3" onClick={() => openModal('full')}>
+                        <Plus size={18} style={{ marginRight: '8px' }} /> Neuer Eintrag
+                    </button>
                     <button className="btn-secondary full-width mb-3" onClick={toggleHoliday}>
                         <Check size={18} /> {isUserHoliday ? 'Eigenen Feiertag entfernen' : 'Als Feiertag markieren'}
                     </button>
