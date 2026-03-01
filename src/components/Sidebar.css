@@ -80,3 +80,63 @@
     color: var(--color-text-tertiary);
     font-weight: 600;
 }
+
+/* --- Mobile Responsiveness (Bottom Navigation) --- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100vw;
+        height: auto;
+        flex-direction: row;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        border-right: none;
+        border-top: 1px solid var(--color-border-light);
+        padding: 8px 0;
+        background-color: var(--color-bg-card);
+        padding-bottom: env(safe-area-inset-bottom, 12px);
+        /* For iPhone notch/home bar */
+    }
+
+    .sidebar-header,
+    .sidebar-actions,
+    .sidebar-footer {
+        display: none;
+        /* Hide logo and template buttons on mobile nav */
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+        gap: 0;
+    }
+
+    .nav-item {
+        flex-direction: column;
+        padding: 8px 12px;
+        flex: 1;
+        justify-content: center;
+        border-radius: 0;
+    }
+
+    .nav-item span {
+        margin-left: 0;
+        margin-top: 4px;
+        font-size: 10px;
+        font-weight: 500;
+    }
+
+    .nav-item.active {
+        background-color: transparent;
+        color: var(--color-primary);
+        box-shadow: none;
+    }
+
+    .nav-item.active svg {
+        color: var(--color-primary);
+    }
+}

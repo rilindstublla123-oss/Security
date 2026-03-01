@@ -63,3 +63,25 @@ h1.page-title {
   color: var(--color-text-primary);
   margin-bottom: 24px;
 }
+
+/* --- Mobile Responsiveness (iPhone/Smartphones) --- */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .main-content {
+    padding: 16px;
+    padding-bottom: 80px;
+    /* Space for bottom navigation */
+  }
+
+  h1.page-title {
+    font-size: 26px;
+    margin-bottom: 16px;
+  }
+
+  button {
+    padding: 10px 16px;
+  }
+}
