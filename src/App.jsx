@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import CalendarView from './components/CalendarView';
 import Summary from './components/Summary';
 import Settings from './components/Settings';
 import EntryModal from './components/EntryModal';
+import { startFirebaseSync } from './utils/config';
 import './App.css';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [modalType, setModalType] = useState(null); // 'quick' | 'full' | null
   const [globalSelectedDate, setGlobalSelectedDate] = useState(new Date());
+  const [syncKey, setSyncKey] = useState(0);
+
+  useEffect(() => {
+    // Start listening to Firebase in the background
+    const unsubscribe = startFirebaseSync(() => {
+      // Whenever new data arrives from the cloud, increment syncKey
+      // This forces the React components to remount and read the new localStorage
+      setSyncKey(prev => prev + 1);
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
 
   const handleSaveSuccess = () => {
-    // If we need to trigger a refresh across tabs, we could do it here
-    // For now, React's re-render handles prop changes if we passed them,
-    // but our components read directly from localStorage on mount.
-    // Toggling the active tab forces a remount and thus a refresh:
-    const current = activeTab;
-    setActiveTab('');
-    setTimeout(() => setActiveTab(current), 10);
+    // Force local refresh when saving manually
+    setSyncKey(prev => prev + 1);
   };
 
   const renderContent = () => {
@@ -45,12 +55,13 @@ function App() {
   return (
     <div className="app-container">
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} openModal={setModalType} />
-      <main className="main-content">
+      <main className="main-content" key={syncKey}>
         {renderContent()}
       </main>
 
       {modalType && (
         <EntryModal
+          key={`modal-${syncKey}`}
           isQuick={modalType === 'quick'}
           onClose={() => setModalType(null)}
           onSaveSuccess={handleSaveSuccess}

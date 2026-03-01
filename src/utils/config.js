@@ -1,3 +1,5 @@
+import { db, doc, setDoc, onSnapshot } from './firebase';
+
 export const DEFAULT_CONFIG = {
   hourly_rate: 15.04,
   holiday_bonus: 2.0,
@@ -12,6 +14,7 @@ export const DEFAULT_CONFIG = {
 
 const CONFIG_KEY = 'work_hours_config';
 const DATA_KEY = 'work_hours_data';
+const USER_DOC_ID = 'rilind_main_data'; // Hardcoded user ID since this is a personal app
 
 export const loadConfig = () => {
   try {
@@ -36,36 +39,63 @@ export const saveConfig = (config) => {
   }
 };
 
-const INITIAL_DATA = {
-  "07.12.2025": [{ "start": "06:00", "end": "14:00", "location": "Rockwool", "hours": 8.0, "earnings": 156.24, "base_earnings": 124.0, "bonus_earnings": 32.24 }],
-  "13.12.2025": [{ "start": "14:00", "end": "23:00", "location": "Rockwool", "hours": 9.0, "earnings": 150.195, "base_earnings": 139.5, "bonus_earnings": 10.695 }],
-  "20.12.2025": [{ "start": "06:00", "end": "14:00", "location": "Rockwool", "hours": 8.0, "earnings": 124.0, "base_earnings": 124.0, "bonus_earnings": 0.0 }],
-  "29.12.2025": [{ "start": "15:00", "end": "23:00", "location": "Obdachlosenheim", "hours": 8.0, "earnings": 134.695, "base_earnings": 124.0, "bonus_earnings": 10.695 }],
-  "31.12.2025": [{ "start": "06:00", "end": "14:00", "location": "Rockwool", "hours": 8.0, "earnings": 124.0, "base_earnings": 124.0, "bonus_earnings": 0.0 }],
-  "26.12.2025": [{ "start": "20:30", "end": "03:30", "location": "Kulthotel", "hours": 7.0, "earnings": 241.955, "base_earnings": 108.5, "bonus_earnings": 133.455 }],
-  "10.01.2026": [{ "start": "06:00", "end": "14:00", "location": "Rockwool", "hours": 8.0, "earnings": 124.0, "base_earnings": 124.0, "bonus_earnings": 0.0 }],
-  "24.01.2026": [{ "start": "14:00", "end": "22:00", "location": "Rockwool", "hours": 8.0, "earnings": 131.13, "base_earnings": 124.0, "bonus_earnings": 7.13 }],
-  "30.01.2026": [{ "start": "20:30", "end": "07:00", "location": "Rockwool", "hours": 10.5, "earnings": 196.6175, "base_earnings": 162.75, "bonus_earnings": 33.8675 }]
-};
-
 export const loadData = () => {
   try {
     const stored = localStorage.getItem(DATA_KEY);
-    if (!stored) {
-      // Wenn der Speicher leer ist (z.B. neues Gerät/GitHub), lade die initialen Daten
-      saveData(INITIAL_DATA);
-      return INITIAL_DATA;
-    }
+    if (!stored) return {};
     return JSON.parse(stored);
   } catch (e) {
     console.error("Failed to load data:", e);
-    return INITIAL_DATA;
+    return {};
   }
+};
+
+let isPushedFromRemote = false;
+
+// Async function called from App.jsx to listen to cloud changes
+export const startFirebaseSync = (onDataChanged) => {
+  const docRef = doc(db, "users", USER_DOC_ID);
+
+  // Real-time listener for cloud changes
+  return onSnapshot(docRef, (docSnap) => {
+    if (docSnap.exists()) {
+      const remoteData = docSnap.data().entries || {};
+      const currentLocal = localStorage.getItem(DATA_KEY);
+
+      // Prevent infinite loops if we just pushed this ourselves
+      const remoteString = JSON.stringify(remoteData);
+      if (currentLocal !== remoteString) {
+        console.log("Firebase sync: New data received from cloud!");
+        isPushedFromRemote = true; // flag to prevent immediate re-upload
+        localStorage.setItem(DATA_KEY, remoteString);
+        onDataChanged(); // Tell React to re-render
+      }
+    }
+  }, (error) => {
+    console.error("Firebase sync error:", error);
+  });
 };
 
 export const saveData = (data) => {
   try {
-    localStorage.setItem(DATA_KEY, JSON.stringify(data));
+    // 1. Save locally (instant UI response)
+    const jsonString = JSON.stringify(data);
+    localStorage.setItem(DATA_KEY, jsonString);
+
+    // 2. Push to Firebase in background (if not triggered by a remote sync)
+    if (!isPushedFromRemote) {
+      const docRef = doc(db, "users", USER_DOC_ID);
+      setDoc(docRef, {
+        entries: data,
+        lastUpdated: new Date().toISOString()
+      }, { merge: true }).catch(err => {
+        console.error("Firebase backup failed (will retry on next change):", err);
+      });
+    }
+
+    // Reset flag after saving
+    isPushedFromRemote = false;
+
     return true;
   } catch (e) {
     console.error("Failed to save data:", e);
