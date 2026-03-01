@@ -19,19 +19,43 @@ export default function Sidebar({ activeTab, setActiveTab, openModal }) {
             </div>
 
             <nav className="sidebar-nav">
-                {navItems.map(item => {
-                    const Icon = item.icon;
-                    return (
-                        <button
-                            key={item.id}
-                            className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-                            onClick={() => setActiveTab(item.id)}
-                        >
-                            <Icon size={20} />
-                            <span>{item.label}</span>
-                        </button>
-                    );
-                })}
+                <button
+                    className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('dashboard')}
+                >
+                    <LayoutDashboard size={20} />
+                    <span>Dashboard</span>
+                </button>
+                <button
+                    className={`nav-item ${activeTab === 'summary' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('summary')}
+                >
+                    <ClipboardList size={20} />
+                    <span>Übersicht</span>
+                </button>
+
+                {/* FAB: Floating Action Button (Prominent in middle for mobile) */}
+                <button className="nav-item mobile-fab-button" onClick={() => openModal('quick')}>
+                    <div className="fab-icon-wrapper">
+                        <Plus size={24} color="white" />
+                    </div>
+                    <span>Eintrag</span>
+                </button>
+
+                <button
+                    className={`nav-item ${activeTab === 'calendar' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('calendar')}
+                >
+                    <Calendar size={20} />
+                    <span>Kalender</span>
+                </button>
+                <button
+                    className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('settings')}
+                >
+                    <Settings size={20} />
+                    <span>Setup</span>
+                </button>
             </nav>
 
             <div className="sidebar-actions">

@@ -72,8 +72,8 @@ h1.page-title {
 
   .main-content {
     padding: 16px;
-    padding-bottom: 80px;
-    /* Space for bottom navigation */
+    /* Space for bottom navigation + safe area */
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 20px));
   }
 
   h1.page-title {
